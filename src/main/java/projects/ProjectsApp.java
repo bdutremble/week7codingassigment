@@ -9,7 +9,7 @@ import projects.dao.DbConnection;
  * @author briandutremble
  *
  */
-public class Projects {
+public class ProjectsApp {
 
 	/**
 	 * @param args
