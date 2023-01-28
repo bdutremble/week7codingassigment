@@ -21,7 +21,8 @@ public class ProjectService {
 	public void createAndPopulateTables() {
 		loadFromFile(SCHEMA_FILE);
 	}
-
+	
+	// The below methods are used to load and format a schema file for use as an SQL statement to be sent to the database
 	private void loadFromFile(String fileName) {
 		
 		String content = readFileContent(fileName);
@@ -90,7 +91,7 @@ public class ProjectService {
 			throw new DbException(e);
 		}
 	}
-
+// These methods allow for a link to the Dao layer
 	public Project addProject(Project project) {
 		return projectDao.insertProject(project);
 	}

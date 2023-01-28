@@ -6,7 +6,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -27,6 +26,7 @@ public class ProjectDao extends DaoBase {
 	private static final String PROJECT_CATEGORY_TABLE = "project_category";
 	private static final String STEP_TABLE = "step";
 	
+	// This method gets all information about the project associated with the provided project ID
 	public Optional<Project> fetchProjectById(Integer projectId){
 		String sql = "SELECT * FROM " + PROJECT_TABLE + " WHERE project_id = ? ";
 		
@@ -45,6 +45,7 @@ public class ProjectDao extends DaoBase {
 						}
 					}
 				}
+				// This section calls the below methods to get the values in each of these tables related to the project
 				if(Objects.nonNull(project)) {
 					project.getMaterials().addAll(fetchMaterialsForProject(conn, projectId));
 					project.getSteps().addAll(fetchStepsForProject(conn, projectId));
@@ -149,6 +150,7 @@ public class ProjectDao extends DaoBase {
 		}
 	}
 
+	// Used to take the values provided by the user and insert them as a new project in the database
 	public Project insertProject(Project project) {
 		// @formatter:off
 		String sql = ""
@@ -186,7 +188,7 @@ public class ProjectDao extends DaoBase {
 			}
 		
 	}
-
+	// Retrieves all projects from the database so that the user can choose one
 	public List<Project> fetchAllProjects() {
 		String sql = "SELECT * FROM " + PROJECT_TABLE + " ORDER BY project_name";
 		try(Connection conn = DbConnection.getConnection()){

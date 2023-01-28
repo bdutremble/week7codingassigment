@@ -14,6 +14,7 @@ public class DbConnection {
 	private static final String HOST = "localhost";
 	private static final int PORT = 3306;
 	
+	// This is the method that is used to create a connection with the database
 	public static Connection getConnection() {
 		String url = String.format("jdbc:mysql://%s:%d/%s?user=%s&password=%s&useSSL=false", HOST, PORT, SCHEMA, USER, PASSWORD);
 		

@@ -38,6 +38,8 @@ public class ProjectsApp {
 
 	}
 
+	
+	// This is the method by which the user selects an option (using a switch statement)
 	private void processUserSelection() {
 		boolean done = false;
 
@@ -72,6 +74,8 @@ public class ProjectsApp {
 		}
 
 	}
+	
+	// Takes the user's input and then calls the method to fetch the selected project
 	private void selectProject() {
 		listProjects();
 		
@@ -93,6 +97,8 @@ public class ProjectsApp {
 		return projects;
 	}
 
+	// Asks the user to provide each of the attributes for the project to be created
+	// and calls the addProject method to commit those changes
 	private void createProject() {
 		String projectName = getStringInput("Enter the project name");
 		BigDecimal estimatedHours = getDecimalInput("Enter the estimated hours");
@@ -117,6 +123,8 @@ public class ProjectsApp {
 		System.out.println("\nExiting the menu. Thanks for using this program!");
 		return true;
 	}
+	
+	// The below methods are called whenever we want to ask the user for input
 	private int getUserSelection() {
 		printOperations();
 		Integer op = getIntInput("Enter a menu selection");
@@ -157,6 +165,8 @@ public class ProjectsApp {
 		
 		return line.isBlank() ? null : line.trim();
 	}
+	
+	// This prints the available menu options and informs the user whether a project is currently selected
 	private void printOperations() {
 		System.out.println();
 		System.out.println("\nThese are the available selections. Press the enter key to quit:");
