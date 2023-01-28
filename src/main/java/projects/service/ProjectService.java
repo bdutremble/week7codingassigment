@@ -3,6 +3,7 @@ package projects.service;
 import java.nio.file.*;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import projects.dao.ProjectDao;
 import projects.entity.Project;
@@ -13,12 +14,16 @@ public class ProjectService {
 	
 	private ProjectDao projectDao = new ProjectDao();
 	
+	public Project fetchProjectById(Integer projectId){
+		return projectDao.fetchProjectById(projectId).orElseThrow(() -> new NoSuchElementException("Project with ID=" + projectId + " does not exist."));
+	}
+	
 	public void createAndPopulateTables() {
 		loadFromFile(SCHEMA_FILE);
 	}
 
 	private void loadFromFile(String fileName) {
-		// TODO Auto-generated method stub
+		
 		String content = readFileContent(fileName);
 		List<String> sqlStatements = convertContentToSqlStatements(content);
 		
@@ -88,6 +93,11 @@ public class ProjectService {
 
 	public Project addProject(Project project) {
 		return projectDao.insertProject(project);
+	}
+
+	public List<Project> fetchAllProjects() {
+
+		return projectDao.fetchAllProjects();
 	}
 	
 }
