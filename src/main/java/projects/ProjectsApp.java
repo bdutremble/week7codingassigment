@@ -88,7 +88,7 @@ public class ProjectsApp {
 					break;
 
 				default:
-					System.out.println("\n" + selection + " is not valid. Try again.");
+					System.out.println("\n" + selection + " is not a valid menu selection. Try again.");
 					break;
 				}
 			} catch (Exception e) {
@@ -226,7 +226,7 @@ public class ProjectsApp {
 		Project dbProject = projectService.addProject(project);
 		System.out.println("You have successfully created project: " + dbProject);
 		
-		curProject = projectService.fetchProjectById(dbProject.getProjectId());
+		//curProject = projectService.fetchProjectById(dbProject.getProjectId());
 	}
 	private boolean exitMenu() {
 		System.out.println("\nExiting the menu. Thanks for using this program!");
