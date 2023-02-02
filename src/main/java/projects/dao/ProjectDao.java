@@ -210,4 +210,123 @@ public class ProjectDao extends DaoBase {
 		}
 	}
 
+	public boolean modifyProjectDetails(Project project) {
+		//@formatter:off
+		String sql = ""
+				+ "UPDATE " + PROJECT_TABLE + " SET "
+				+ "project_name = ?, "
+				+ "estimated_hours = ?, "
+				+ "actual_hours = ?, "
+				+ "difficulty = ?, "
+				+ "notes = ? "
+				+ "WHERE project_id = ?";
+		//@formatter:on
+		try (Connection conn = DbConnection.getConnection()) {
+			startTransaction(conn);
+
+			try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+				setParameter(stmt, 1, project.getProjectName(), String.class);
+				setParameter(stmt, 2, project.getEstimatedHours(), BigDecimal.class);
+				setParameter(stmt, 3, project.getActualHours(), BigDecimal.class);
+				setParameter(stmt, 4, project.getDifficulty(), Integer.class);
+				setParameter(stmt, 5, project.getNotes(), String.class);
+				setParameter(stmt, 6, project.getProjectId(), Integer.class);
+				
+				//stmt.executeUpdate();
+				boolean updated = stmt.executeUpdate() == 1;
+			
+				commitTransaction(conn);
+				
+				return updated;
+				
+			} catch (Exception e) {
+				rollbackTransaction(conn);
+				throw new DbException(e);
+			}
+		}
+			catch (SQLException e) {
+				throw new DbException(e);
+			}
+		
+	}
+
+	public boolean deleteProject(Integer projectId) {
+		String sql = "DELETE FROM " + PROJECT_TABLE + " WHERE project_id = ?";
+		
+		try(Connection conn = DbConnection.getConnection()) {
+			startTransaction(conn);
+			
+			try(PreparedStatement stmt = conn.prepareStatement(sql)){
+				setParameter(stmt, 1, projectId, Integer.class);
+				
+				boolean deleted = stmt.executeUpdate() == 1;
+				
+				commitTransaction(conn);
+				return deleted;
+			}
+			catch(Exception e) {
+				rollbackTransaction(conn);
+				throw new DbException(e);
+			}
+		}
+		catch(SQLException e) {
+			throw new DbException(e);
+		}
+	}
+
+	public void addStepToProject(Step step) {
+		String sql = "INSERT INTO " + STEP_TABLE + " (project_id, step_order, step_text)" + " VALUES (?, ?, ?)";
+
+		try (Connection conn = DbConnection.getConnection()) {
+			startTransaction(conn);
+			
+			Integer order = getNextSequenceNumber(conn, step.getProjectId(), STEP_TABLE, "project_id");
+		try(PreparedStatement stmt = conn.prepareStatement(sql)){
+			setParameter(stmt, 1, step.getProjectId(), Integer.class);
+			setParameter(stmt, 2, order, Integer.class);
+			setParameter(stmt, 3, step.getStepText(), String.class);
+			
+			stmt.executeUpdate();
+			commitTransaction(conn);
+		}
+			catch(Exception e) {
+				rollbackTransaction(conn);
+				throw new DbException(e);
+			}
+
+		} catch (SQLException e) {
+			throw new DbException(e);
+		}
+	}
+
+	public void addMaterialToProject(Material material) {
+		String sql = "INSERT INTO " + MATERIAL_TABLE + " (project_id, material_name, num_required, cost) "
+				+ "VALUES (?, ?, ?, ? )";
+		
+		try(Connection conn = DbConnection.getConnection()){
+			startTransaction(conn);
+			
+			try {
+				//Integer order = getNextSequenceNumber(conn, material.getProjectId(), MATERIAL_TABLE, "project_id");
+				
+				try(PreparedStatement stmt = conn.prepareStatement(sql)){
+					setParameter(stmt, 1, material.getProjectId(), Integer.class);
+					setParameter(stmt, 2, material.getMaterialName(), String.class);
+					setParameter(stmt, 3, material.getNumRequired(), Integer.class);
+					setParameter(stmt, 4, material.getCost(), BigDecimal.class);
+					
+					stmt.executeUpdate();
+					commitTransaction(conn);
+				}
+				
+			}catch(Exception e){
+				rollbackTransaction(conn);
+				throw new DbException();
+			}
+			
+		}catch (SQLException e) {
+			throw new DbException(e);
+		}
+	}
+
 }

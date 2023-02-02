@@ -6,7 +6,9 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 import projects.dao.ProjectDao;
+import projects.entity.Material;
 import projects.entity.Project;
+import projects.entity.Step;
 import projects.exception.DbException;
 
 public class ProjectService {
@@ -91,7 +93,7 @@ public class ProjectService {
 			throw new DbException(e);
 		}
 	}
-// These methods allow for a link to the Dao layer
+	// These methods allow for a link to the Dao layer
 	public Project addProject(Project project) {
 		return projectDao.insertProject(project);
 	}
@@ -99,6 +101,32 @@ public class ProjectService {
 	public List<Project> fetchAllProjects() {
 
 		return projectDao.fetchAllProjects();
+	}
+
+	public void modifyProjectDetails(Project project) {
+		if(!projectDao.modifyProjectDetails(project)) {
+			throw new DbException("Project with ID=" + project.getProjectId() + " does not exist.");
+		}
+		
+	}
+	
+	/**
+	 * @param projectId
+	 */
+	public void deleteProject(Integer projectId) {
+		if(!projectDao.deleteProject(projectId)) {
+			throw new DbException("Project with ID=" + projectId + " does not exist.");
+		}
+	}
+
+	public void addStep(Step step) {
+		projectDao.addStepToProject(step);
+		
+	}
+
+	public void addMaterialToProject(Material material) {
+		projectDao.addMaterialToProject(material);
+		
 	}
 	
 }

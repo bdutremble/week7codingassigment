@@ -8,7 +8,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
 
+import projects.entity.Material;
 import projects.entity.Project;
+import projects.entity.Step;
 import projects.exception.DbException;
 import projects.service.ProjectService;
 
@@ -26,7 +28,12 @@ public class ProjectsApp {
 	private List<String> operations = List.of(
 			"1) Add a project",
 			"2) List projects",
-			"3) Select a project"
+			"3) Select a project",
+			"4) Update project details",
+			"5) Delete a project",
+			"6) Add step to current project",
+			"7) Add material to current project"
+			
 			);
 	// @formatter:on
 	/**
@@ -63,6 +70,22 @@ public class ProjectsApp {
 				case 3:
 					selectProject();
 					break;
+					
+				case 4:
+					updateProjectDetails();
+					break;
+					
+				case 5:
+					deleteProject();
+					break;
+					
+				case 6:
+					addStepToCurrentProject();
+					break;
+				
+				case 7:
+					addMaterialToCurrentProject();
+					break;
 
 				default:
 					System.out.println("\n" + selection + " is not valid. Try again.");
@@ -75,6 +98,92 @@ public class ProjectsApp {
 
 	}
 	
+	private void addStepToCurrentProject() {
+		if(Objects.isNull(curProject)) {
+			System.out.println("\nYou must first select a project to update. Please select a project.");
+			return;
+		}
+		
+		String stepText = getStringInput("Enter the step text");
+		
+		if(Objects.nonNull(stepText)) {
+			Step step = new Step();
+			
+			step.setProjectId(curProject.getProjectId());
+			step.setStepText(stepText);
+			
+			projectService.addStep(step);
+			curProject = projectService.fetchProjectById(step.getProjectId());
+		}
+		
+	}
+
+	private void addMaterialToCurrentProject() {
+		if(Objects.isNull(curProject)) {
+			System.out.println("\nYou must first select a project to update. Please select a project.");
+			return;
+		}
+		
+		String materialName = getStringInput("Enter the material to add");
+		Integer materialQuantity = getIntInput("Enter the quantity");
+		BigDecimal materialCost = getDecimalInput("Enter material cost per unit");
+		
+		if(Objects.nonNull(materialName)) {
+			Material material = new Material();
+			
+			material.setProjectId(curProject.getProjectId());
+			material.setMaterialName(materialName);
+			material.setNumRequired(materialQuantity);
+			material.setCost(materialCost);
+			
+			projectService.addMaterialToProject(material);
+			curProject = projectService.fetchProjectById(material.getProjectId());
+		}
+		
+	}
+
+	private void deleteProject() {
+		listProjects();
+		Integer projectId = getIntInput("Enter a project ID to delete");
+		projectService.deleteProject(projectId);
+		
+		System.out.println("Project " + projectId + " was deleted successfully.");
+		
+		if(Objects.nonNull(curProject) && curProject.getProjectId().equals(projectId)) {
+			curProject = null;
+		}
+		
+	}
+
+
+	private void updateProjectDetails() {
+		if(Objects.isNull(curProject)) {
+			System.out.println("\nYou must first select a project to update. Please select a project.");
+			return;
+		}
+		
+		String projectName = getStringInput("Enter the project name [" + curProject.getProjectName() + "]");
+		BigDecimal estimatedHours = getDecimalInput("Enter the estimated hours [" + curProject.getEstimatedHours() + "]");
+		BigDecimal actualHours = getDecimalInput("Enter the actual hours [" + curProject.getActualHours() + "]");
+		Integer difficulty = getIntInput("Enter project difficulty [" + curProject.getDifficulty() + "]");
+		String notes = getStringInput("Enter the project notes [" + curProject.getNotes() + "]");
+		
+		
+		Project project = new Project();
+		
+		project.setProjectId(curProject.getProjectId());
+		project.setProjectName(Objects.isNull(projectName) ? curProject.getProjectName() : projectName);
+		project.setEstimatedHours(Objects.isNull(estimatedHours) ? curProject.getEstimatedHours() : estimatedHours);
+		project.setActualHours(Objects.isNull(actualHours) ? curProject.getActualHours() : actualHours);
+		project.setDifficulty(Objects.isNull(difficulty) ? curProject.getDifficulty() : difficulty);
+		project.setNotes(Objects.isNull(notes) ? curProject.getNotes() : notes);
+		
+		projectService.modifyProjectDetails(project);
+		curProject = projectService.fetchProjectById(curProject.getProjectId());
+		
+	}
+
+
 	// Takes the user's input and then calls the method to fetch the selected project
 	private void selectProject() {
 		listProjects();
